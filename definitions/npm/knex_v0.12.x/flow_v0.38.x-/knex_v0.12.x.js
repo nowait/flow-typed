@@ -3,8 +3,8 @@ declare class Knex$Migrate {
   rollback(): Promise<any>
 }
 
-declare type Knex$TransactionBody = (tx:Knex$Transaction) => Promise;
-declare class Knex$Transaction mixins Knex$QueryBuilder, events$EventEmitter, Promise {
+declare type Knex$TransactionBody<T> = (tx:Knex$Transaction<T>) => Promise<T>;
+declare class Knex$Transaction<T> mixins Knex$QueryBuilder<T>, events$EventEmitter, Promise {
   commit(connection?: any, value?: any): Promise<any>,
   rollback(): Promise<any>,
   savepoint(connection?: any): Promise<any>
@@ -26,7 +26,7 @@ declare class Knex$QueryBuilder<T> mixins Promise<T> {
   returning(...columns: string[]): this,
   returning(columns: string[]): this,
   as(name: string): this,
-  transacting(trx: ?Knex$Transaction): this,
+  transacting(trx: ?Knex$Transaction<T>): this,
   where(builder: Knex$QueryBuilderFn<T>): this,
   where(column: string, value: any): this,
   where(column: string, operator: string, value: any): this,
@@ -117,9 +117,9 @@ declare class Knex$QueryBuilder<T> mixins Promise<T> {
   pluck(column: string): this,
   first(): this,
   from(table: string): this,
-  from(builder: Knex$QueryBuilderFn<T> | Knex$Knex | Knex$QueryBuilder<T>): this,
+  from(builder: Knex$QueryBuilderFn<T> | Knex$Knex<T> | Knex$QueryBuilder<T>): this,
   into(table: string): this,
-  insert(val: Object | Object[], returning: string|Array<string>): this,
+  insert(val: Object | Object[], returning?: string|Array<string>): this,
   del(): this,
   delete(): this,
   update(column: string, value: any): this,
@@ -127,14 +127,14 @@ declare class Knex$QueryBuilder<T> mixins Promise<T> {
   returning(columns: string[]): this
 }
 
-declare class Knex$Knex mixins Knex$QueryBuilder<T>, Promise, events$EventEmitter {
-  static (config: Knex$Config): Knex$Knex,
+declare class Knex$Knex<T> mixins Knex$QueryBuilder<T>, Promise, events$EventEmitter {
+  static (config: Knex$Config): Knex$Knex<T>,
   static QueryBuilder: typeof Knex$QueryBuilder,
   $call: (tableName: string) => Knex$QueryBuilder<T>,
   raw(sqlString: string, bindings?: Knex$RawBindings): any,
   client: any,
   destroy(): Promise<void>,
-  transaction (run:Knex$TransactionBody):Knex$Transaction,
+  transaction (run:Knex$TransactionBody<T>):Knex$Transaction<T>,
   migrate: Knex$Migrate
 }
 
@@ -193,7 +193,7 @@ declare module 'knex' {
     line: string,
     routine: string
   };
-  declare export type $Transaction = Knex$Transaction;
+  declare export type $Transaction<T> = Knex$Transaction<T>;
   declare export type $QueryBuilder<T> = Knex$QueryBuilder<T>;
   declare var exports: typeof Knex$Knex;
 }
