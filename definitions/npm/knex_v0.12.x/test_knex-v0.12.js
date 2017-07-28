@@ -38,6 +38,15 @@ knex.crossJoin('bar', function() {
 knex('foo').insert({
   a: 1,
 });
+knex('foo').insert({a: 1}, 'name');
+
+const q = knex('foo')
+  .update({a: 1})
+  .where({b: 2});
+knex('foo')
+  .update({a: 1}, 'c')
+  .where({b: 2});
+
 knex('bar').del();
 // $ExpectError
 knex.from();

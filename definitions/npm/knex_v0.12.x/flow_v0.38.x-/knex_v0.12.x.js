@@ -118,12 +118,11 @@ declare class Knex$QueryBuilder<T> mixins Promise<T> {
   first(): this,
   from(table: string): this,
   from(builder: Knex$QueryBuilderFn<T> | Knex$Knex<T> | Knex$QueryBuilder<T>): this,
-  into(table: string): this,
   insert(val: Object | Object[], returning?: string|Array<string>): this,
   del(): this,
   delete(): this,
   update(column: string, value: any): this,
-  update(val: Object, returning: string|Array<string>): this,
+  update(val: Object, returning?: string|Array<string>): this,
   returning(columns: string[]): this
 }
 
@@ -134,7 +133,7 @@ declare class Knex$Knex<T> mixins Knex$QueryBuilder<T>, Promise, events$EventEmi
   raw(sqlString: string, bindings?: Knex$RawBindings): any,
   client: any,
   destroy(): Promise<void>,
-  transaction (run:Knex$TransactionBody<T>):Knex$Transaction<T>,
+  transaction(run:Knex$TransactionBody<T>): Knex$Transaction<T>,
   migrate: Knex$Migrate
 }
 
